@@ -233,7 +233,7 @@ def responder(texto: str, cliente_id: str):
     # ====================
     # MENÚ
     # ====================
-elif any(p in texto for p in ["menu", "menú", "carta", "lista"]):
+    if any(p in texto for p in ["menu", "menú", "carta", "lista"]):
     return {
         "tipo": "imagenes",
         "contenido": [
