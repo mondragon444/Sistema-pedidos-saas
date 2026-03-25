@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel de Pedidos</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #121212;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .actualizar {
+            background: #00bcd4;
+            color: black;
+        }
+
+        .card {
+            background: #1e1e1e;
+            margin: 10px auto;
+            padding: 15px;
+            width: 300px;
+            border-radius: 10px;
+        }
+
+        .preparando {
+            background: orange;
+            color: black;
+        }
+
+        .terminado {
+            background: green;
+            color: white;
+        }
+
+        .enviado {
+            background: purple;
+            color: white;
+        }
+
+        input {
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            margin-top: 10px;
+            width: 250px;
+        }
+
+        #chatContainer {
+            width: 320px;
+            margin: 20px auto;
+            text-align: left;
+        }
+
+        #chat {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            background: #1e1e1e;
+        }
+
+        .mensaje {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+            word-wrap: break-word;
+        }
+
+        .usuario {
+            background: #2196f3;
+            text-align: right;
+        }
+
+        .bot {
+            background: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>📦 Pedidos</h1>
+
+    <button class="actualizar" onclick="cargarPedidos()">Actualizar</button>
+    <button onclick="toggleChat()">Abrir chat de prueba</button>
+
+    <!-- CHAT DE PRUEBA -->
+    <div id="chatContainer">
+        <input type="text" id="mensaje" placeholder="Escribe mensaje..." />
+        <button onclick="enviarMensaje()">Enviar</button>
+        <div id="chat"></div>
+    </div>
+
+    <!-- LISTA PEDIDOS -->
+    <div id="lista"></div>
+
+    <script>
+        // ========================
+        // Mostrar/ocultar chat
+        // ========================
+        function toggleChat() {
+            const chatDiv = document.getElementById("chat");
+            chatDiv.style.display = chatDiv.style.display === "none" ? "block" : "none";
+        }
+
+        // ========================
+        // Cargar pedidos del backend
+        // ========================
+        async function cargarPedidos() {
+            const res = await fetch("http://127.0.0.1:8000/pedidos");
+            const data = await res.json();
+            const lista = document.getElementById("lista");
+            lista.innerHTML = "";
+
+            data.forEach(p => {
+                const item = document.createElement("div");
+                item.className = "card";
+
+                // determinar clase de estado
+                let claseEstado = "";
+                if (p.estado === "preparando") claseEstado = "preparando";
+                else if (p.estado === "terminado") claseEstado = "terminado";
+                else if (p.estado === "enviado") claseEstado = "enviado";
+
+                item.innerHTML = `
+                    <h3>${p.cliente}</h3>
+                    <p>${p.producto}</p>
+                    <p class="${claseEstado}">Estado: ${p.estado}</p>
+                    <button class="preparando" onclick="cambiarEstado(${p.id}, 'preparando')">Preparando</button>
+                    <button class="terminado" onclick="cambiarEstado(${p.id}, 'terminado')">Terminado</button>
+                    <button class="enviado" onclick="cambiarEstado(${p.id}, 'enviado')">Enviado</button>
+                `;
+
+                lista.appendChild(item);
+            });
+        }
+
+        // ========================
+        // Cambiar estado de pedido
+        // ========================
+        async function cambiarEstado(id, estado) {
+            await fetch(`http://127.0.0.1:8000/pedido/${id}?estado=${estado}`, {
+                method: "PUT"
+            });
+            cargarPedidos();
+        }
+
+        // ========================
+        // Enviar mensaje desde chat de prueba
+        // ========================
+async function enviarMensaje() {
+    const input = document.getElementById("mensaje");
+    const texto = input.value.trim();
+    if (!texto) return;
+
+    const chat = document.getElementById("chat");
+
+    // mensaje usuario
+    const msgUser = document.createElement("div");
+    msgUser.className = "mensaje usuario";
+    msgUser.innerText = texto;
+    chat.appendChild(msgUser);
+
+    // enviar al backend
+    const res = await fetch(`http://127.0.0.1:8000/mensaje?cliente_id=test&texto=${encodeURIComponent(texto)}`, {
+        method: "POST"
+    });
+
+    const data = await res.json();
+
+    // respuesta bot
+    const msgBot = document.createElement("div");
+    msgBot.className = "mensaje bot";
+
+    // 🔥 aquí mejoramos cómo se muestra
+    let respuesta = data.respuesta;
+
+    // Si el mensaje contiene confirmación
+    if (respuesta.includes("¿Confirmas")) {
+        respuesta += "\n\n👉 Responde: sí / no";
+    }
+
+    msgBot.innerText = respuesta;
+    chat.appendChild(msgBot);
+
+    input.value = "";
+    cargarPedidos();
+
+    chat.scrollTop = chat.scrollHeight;
+}
+
+        // ========================
+        // Auto refrescar pedidos cada 5 seg
+        // ========================
+        setInterval(cargarPedidos, 5000);
+    </script>
+
+</body>
+</html>
