@@ -181,21 +181,29 @@ async function enviarMensaje() {
         method: "POST"
     });
 
-    const data = await res.json();
+const data = await res.json();
 
-    // respuesta bot
-    const msgBot = document.createElement("div");
-    msgBot.className = "mensaje bot";
+// respuesta bot
+const msgBot = document.createElement("div");
+msgBot.className = "mensaje bot";
 
-    // 🔥 aquí mejoramos cómo se muestra
-    let respuesta = data.respuesta;
+// 🔥 aquí mejoramos cómo se muestra
+let respuesta = data.respuesta;
 
-    // Si el mensaje contiene confirmación
-    if (respuesta.includes("¿Confirmas")) {
-        respuesta += "\n\n👉 Responde: sí / no";
+// Si el mensaje contiene confirmación
+if (respuesta && respuesta.includes("¿Confirmas")) {
+    respuesta += "\n\n👉 Responde: sí / no";
+}
+
+// Si hay imágenes en la respuesta
+if (data.tipo === "imagenes") {
+    // Primero mostramos el texto, si existe
+    if (respuesta) {
+        msgBot.innerText = respuesta;
+        chat.appendChild(msgBot);
     }
 
-    if (data.tipo === "imagenes") {
+    // Luego mostramos las imágenes
     data.contenido.forEach(url => {
         const img = document.createElement("img");
         img.src = url;
@@ -204,23 +212,27 @@ async function enviarMensaje() {
         img.style.borderRadius = "8px";
         chat.appendChild(img);
     });
+
 } else {
-    msgBot.innerText = data.respuesta;
+    // Solo texto normal
+    msgBot.innerText = respuesta;
     chat.appendChild(msgBot);
-    }
-    chat.appendChild(msgBot);
-
-    input.value = "";
-    cargarPedidos();
-
-    chat.scrollTop = chat.scrollHeight;
 }
 
-        // ========================
-        // Auto refrescar pedidos cada 5 seg
-        // ========================
-        setInterval(cargarPedidos, 5000);
-    </script>
+// Limpiar input
+input.value = "";
+
+// Cargar pedidos actualizados
+cargarPedidos();
+
+// Scroll automático al final del chat
+chat.scrollTop = chat.scrollHeight;
+
+// ========================
+// Auto refrescar pedidos cada 5 seg
+// ========================
+setInterval(cargarPedidos, 5000);
+</script>
 
 </body>
 </html>
