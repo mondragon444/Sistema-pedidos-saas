@@ -163,76 +163,69 @@
         // ========================
         // Enviar mensaje desde chat de prueba
         // ========================
-async function enviarMensaje() {
-    const input = document.getElementById("mensaje");
-    const texto = input.value.trim();
-    if (!texto) return;
+        async function enviarMensaje() {
+            const input = document.getElementById("mensaje");
+            const texto = input.value.trim();
+            if (!texto) return;
 
-    const chat = document.getElementById("chat");
+            const chat = document.getElementById("chat");
 
-    // mensaje usuario
-    const msgUser = document.createElement("div");
-    msgUser.className = "mensaje usuario";
-    msgUser.innerText = texto;
-    chat.appendChild(msgUser);
+            // mensaje usuario
+            const msgUser = document.createElement("div");
+            msgUser.className = "mensaje usuario";
+            msgUser.innerText = texto;
+            chat.appendChild(msgUser);
 
-    // enviar al backend
-    const res = await fetch(`http://127.0.0.1:8000/mensaje?cliente_id=test&texto=${encodeURIComponent(texto)}`, {
-        method: "POST"
-    });
+            // enviar al backend
+            const res = await fetch(`http://127.0.0.1:8000/mensaje?cliente_id=test&texto=${encodeURIComponent(texto)}`, {
+                method: "POST"
+            });
 
-const data = await res.json();
+            const data = await res.json();
 
-// respuesta bot
-const msgBot = document.createElement("div");
-msgBot.className = "mensaje bot";
+            // respuesta bot
+            let respuesta = data.respuesta || "";
+            const msgBot = document.createElement("div");
+            msgBot.className = "mensaje bot";
 
-// 🔥 aquí mejoramos cómo se muestra
-let respuesta = data.respuesta;
+            // Si el mensaje contiene confirmación
+            if (respuesta.includes("¿Confirmas")) {
+                respuesta += "\n\n👉 Responde: sí / no";
+            }
 
-// Si el mensaje contiene confirmación
-if (respuesta && respuesta.includes("¿Confirmas")) {
-    respuesta += "\n\n👉 Responde: sí / no";
-}
+            // Primero mostramos el texto, si existe
+            if (respuesta) {
+                msgBot.innerText = respuesta;
+                chat.appendChild(msgBot);
+            }
 
-// Si hay imágenes en la respuesta
-if (data.tipo === "imagenes") {
-    // Primero mostramos el texto, si existe
-    if (respuesta) {
-        msgBot.innerText = respuesta;
-        chat.appendChild(msgBot);
-    }
+            // Luego mostramos las imágenes, si las hay
+            if (data.tipo === "imagenes" && Array.isArray(data.contenido)) {
+                data.contenido.forEach(url => {
+                    const img = document.createElement("img");
+                    img.src = url;
+                    img.style.width = "100%";
+                    img.style.marginTop = "5px";
+                    img.style.borderRadius = "8px";
+                    chat.appendChild(img);
+                });
+            }
 
-    // Luego mostramos las imágenes
-    data.contenido.forEach(url => {
-        const img = document.createElement("img");
-        img.src = url;
-        img.style.width = "100%";
-        img.style.marginTop = "5px";
-        img.style.borderRadius = "8px";
-        chat.appendChild(img);
-    });
+            // Limpiar input
+            input.value = "";
 
-} else {
-    // Solo texto normal
-    msgBot.innerText = respuesta;
-    chat.appendChild(msgBot);
-}
+            // Cargar pedidos actualizados
+            cargarPedidos();
 
-// Limpiar input
-input.value = "";
+            // Scroll automático al final del chat
+            chat.scrollTop = chat.scrollHeight;
+        }
 
-// Cargar pedidos actualizados
-cargarPedidos();
-
-// Scroll automático al final del chat
-chat.scrollTop = chat.scrollHeight;
-
-// ========================
-// Auto refrescar pedidos cada 5 seg
-// ========================
-setInterval(cargarPedidos, 5000);
-</script>
+        // ========================
+        // Auto refrescar pedidos cada 5 seg
+        // ========================
+        setInterval(cargarPedidos, 5000);
+    </script>
 
 </body>
 </html>
