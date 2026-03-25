@@ -184,32 +184,34 @@
             const data = await res.json();
 
             // respuesta bot
-            let respuesta = data.respuesta || "";
-            const msgBot = document.createElement("div");
-            msgBot.className = "mensaje bot";
+const msgBot = document.createElement("div");
+msgBot.className = "mensaje bot";
 
-            // Si el mensaje contiene confirmación
-            if (respuesta.includes("¿Confirmas")) {
-                respuesta += "\n\n👉 Responde: sí / no";
-            }
+// Si hay texto en la respuesta, mostrarlo
+if (data.respuesta) {
+    let respuesta = data.respuesta;
 
-            // Primero mostramos el texto, si existe
-            if (respuesta) {
-                msgBot.innerText = respuesta;
-                chat.appendChild(msgBot);
-            }
+    if (respuesta.includes("¿Confirmas")) {
+        respuesta += "\n\n👉 Responde: sí / no";
+    }
 
-            // Luego mostramos las imágenes, si las hay
-            if (data.tipo === "imagenes" && Array.isArray(data.contenido)) {
-                data.contenido.forEach(url => {
-                    const img = document.createElement("img");
-                    img.src = url;
-                    img.style.width = "100%";
-                    img.style.marginTop = "5px";
-                    img.style.borderRadius = "8px";
-                    chat.appendChild(img);
-                });
-            }
+    msgBot.innerText = respuesta;
+}
+
+// Si hay imágenes, agregarlas al mismo div
+if (data.tipo === "imagenes" && Array.isArray(data.contenido)) {
+    data.contenido.forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        img.style.width = "100%";
+        img.style.marginTop = "5px";
+        img.style.borderRadius = "8px";
+        msgBot.appendChild(img);
+    });
+}
+
+// Finalmente agregar al chat
+chat.appendChild(msgBot);
 
             // Limpiar input
             input.value = "";
