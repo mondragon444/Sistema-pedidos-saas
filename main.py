@@ -233,22 +233,14 @@ def responder(texto: str, cliente_id: str):
     # ====================
     # MENÚ
     # ====================
-    if any(p in texto for p in ["menu", "menú", "carta", "lista"]):
-        return f"""
-🌮 {menu_taqueria['info_establecimiento']['nombre']}
-
-📍 {menu_taqueria['info_establecimiento']['direccion']}
-📞 {menu_taqueria['info_establecimiento']['telefono']}
-
-🔥 Especialidades desde $95
-🌮 Tacos desde $12
-🧀 Gringas desde $45
-🥤 Bebidas desde $22
-
-¿Se te antoja algo? 😄
-"""
-
-    # ====================
+elif any(p in texto for p in ["menu", "menú", "carta", "lista"]):
+    return {
+        "tipo": "imagenes",
+        "contenido": [
+            "https://github.com/mondragon444/Sistema-pedidos-saas/blob/main/fortuna1.jpg",
+            "https://github.com/mondragon444/Sistema-pedidos-saas/blob/main/fortuna2.jpg"
+        ]
+    }    # ====================
     # NUEVO PEDIDO
     # ====================
     if any(p in texto for p in productos_base):
