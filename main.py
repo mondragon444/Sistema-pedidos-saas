@@ -229,7 +229,41 @@ def responder(texto: str, cliente_id: str):
             "Hola 🔥 aquí estamos, ¿qué te animas a pedir?",
             "¡Qué onda! ¿para cenar algo rico o solo estás viendo?"
         ])
-        
+# ====================
+    # MENÚ
+    # ====================
+    if any(p in texto for p in ["menu", "menú", "carta", "lista"]):
+        return {
+            "tipo": "imagenes",
+            "contenido": [
+                "https://raw.githubusercontent.com/mondragon444/Sistema-pedidos-saas/main/fortuna1.jpg",
+                "https://raw.githubusercontent.com/mondragon444/Sistema-pedidos-saas/main/fortuna2.jpg"
+            ]
+        }
+
+    # ====================
+    # NUEVO PEDIDO
+    # ====================
+    if any(p in texto for p in productos_base):
+        items = extraer_pedidos(texto)
+
+        if not items:
+            return "No entendí bien tu pedido 😅 ¿puedes escribirlo así? Ej: 3 tacos pastor"
+
+        pedidos_temporales[cliente_id] = items
+
+        faltantes = [i for i in items if i["tipo"] is None]
+
+        if faltantes:
+            productos = ", ".join(set(i["producto"] for i in faltantes))
+            return f"He registrado tu pedido 😄 pero me falta saber de qué son: {productos}"
+
+        resumen = ", ".join(
+            f'{i["cantidad"]} x {i["producto"]} de {i["tipo"]}'
+            for i in items
+        )
+
+        return f"Tu pedido es: {resumen}. ¿Lo confirmas? (sí/no)"        
     # ====================
     # DEFAULT
     # ====================
