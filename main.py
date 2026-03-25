@@ -230,17 +230,18 @@ def responder(texto: str, cliente_id: str):
             "¡Qué onda! ¿para cenar algo rico o solo estás viendo?"
         ])
 
-    # ====================
-    # MENÚ
-    # ====================
-    if any(p in texto for p in ["menu", "menú", "carta", "lista"]):
+# ====================
+# MENÚ
+# ====================
+if any(p in texto for p in ["menu", "menú", "carta", "lista"]):
     return {
         "tipo": "imagenes",
         "contenido": [
-            "https://github.com/mondragon444/Sistema-pedidos-saas/blob/main/fortuna1.jpg",
-            "https://github.com/mondragon444/Sistema-pedidos-saas/blob/main/fortuna2.jpg"
+            "https://raw.githubusercontent.com/mondragon444/Sistema-pedidos-saas/main/fortuna1.jpg",
+            "https://raw.githubusercontent.com/mondragon444/Sistema-pedidos-saas/main/fortuna2.jpg"
         ]
-    }    # ====================
+    }
+    # ====================
     # NUEVO PEDIDO
     # ====================
     if any(p in texto for p in productos_base):
