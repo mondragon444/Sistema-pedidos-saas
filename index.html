@@ -195,7 +195,19 @@ async function enviarMensaje() {
         respuesta += "\n\n👉 Responde: sí / no";
     }
 
-    msgBot.innerText = respuesta;
+    if (data.tipo === "imagenes") {
+    data.contenido.forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        img.style.width = "100%";
+        img.style.marginTop = "5px";
+        img.style.borderRadius = "8px";
+        chat.appendChild(img);
+    });
+} else {
+    msgBot.innerText = data.respuesta;
+    chat.appendChild(msgBot);
+    }
     chat.appendChild(msgBot);
 
     input.value = "";
