@@ -310,7 +310,19 @@ def actualizar_estado(id: int, estado: str):
     return {"error": "Pedido no encontrado"}
 
 
+from pydantic import BaseModel
+
+class Mensaje(BaseModel):
+    cliente_id: str
+    texto: str
+
 @app.post("/mensaje")
-def recibir_mensaje(cliente_id: str, texto: str):
-    respuesta = responder(texto, cliente_id)
+def recibir_mensaje(mensaje: Mensaje):
+    respuesta = responder(mensaje.texto, mensaje.cliente_id)
+
+    # si ya es dict (como imágenes), lo regresamos tal cual
+    if isinstance(respuesta, dict):
+        return respuesta
+
+    # si es texto normal
     return {"respuesta": respuesta}
