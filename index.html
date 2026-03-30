@@ -177,9 +177,16 @@
             chat.appendChild(msgUser);
 
             // enviar al backend
-            const res = await fetch(`http://127.0.0.1:8000/mensaje?cliente_id=test&texto=${encodeURIComponent(texto)}`, {
-                method: "POST"
-            });
+            const res = await fetch("http://127.0.0.1:8000/mensaje", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        cliente_id: "test",
+        texto: texto
+    })
+});
 
             const data = await res.json();
 
