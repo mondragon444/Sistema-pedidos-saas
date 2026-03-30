@@ -234,8 +234,9 @@ def responder(texto: str, cliente_id: str):
     # ====================
     if any(p in texto for p in ["menu", "menú", "carta", "lista"]):
         return {
-            "tipo": "imagenes",
-            "contenido": [
+        "respuesta": "Aquí te dejo el menú 😄👇",
+        "tipo": "imagenes",
+        "contenido": [
                 "https://raw.githubusercontent.com/mondragon444/Sistema-pedidos-saas/main/fortuna1.jpg",
                 "https://raw.githubusercontent.com/mondragon444/Sistema-pedidos-saas/main/fortuna2.jpg"
             ]
