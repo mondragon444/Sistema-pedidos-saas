@@ -133,7 +133,7 @@ def extraer_pedidos(texto):
     texto = texto.lower()
 
     # 🔥 limpiar palabras innecesarias
-    texto = texto.replace(",", " ").replace("y", " ")
+    texto = texto.replace(",", " ").replace("y", " ").replace("de", " ")
     palabras = texto.split()
 
     resultado = []
