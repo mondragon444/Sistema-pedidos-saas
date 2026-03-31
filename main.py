@@ -97,6 +97,14 @@ productos_base = [
     "volcan", "volcanes", "alambre", "alambres"
 ]
 
+especialidades_menu = [
+    "la fortuna",
+    "la lumbre",
+    "la tablita",
+    "arrachera asada",
+    "si te llenas",
+    "super taconazo"
+]
 # ========================
 # Modelo
 # ========================
