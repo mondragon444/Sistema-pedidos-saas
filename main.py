@@ -134,6 +134,16 @@ def extraer_pedidos(texto):
     palabras = texto.split()
 
     resultado = []
+
+    # 🔥 detectar especialidades completas
+    for esp in especialidades_menu:
+        if esp in texto:
+            resultado.append({
+                "cantidad": 1,
+                "producto": esp,
+                "tipo": "especialidad"
+            })
+
     i = 0
 
     while i < len(palabras):
