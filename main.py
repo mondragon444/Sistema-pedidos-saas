@@ -158,33 +158,35 @@ def extraer_pedidos(texto):
     # 2. DETECTAR PEDIDOS NORMALES
     # =========================
     i = 0
-    while i < len(palabras):
-        if palabras[i].isdigit():
-    # evitar doble conteo
-    if i > 0 and palabras[i-1] in tipos_carne:
-        i += 1
-        continue
-            cantidad = int(palabras[i])
-            producto = "taco"
-            tipo = None
+while i < len(palabras):
+    if palabras[i].isdigit():
 
-            # producto
-            if i + 1 < len(palabras) and palabras[i+1] in productos_base:
-                producto = palabras[i+1]
-                i += 1
+        # 🔥 evitar doble conteo
+        if i > 0 and palabras[i-1] in tipos_carne:
+            i += 1
+            continue
 
-            # tipo
-            if i + 1 < len(palabras) and palabras[i+1] in tipos_carne:
-                tipo = palabras[i+1]
-                i += 1
+        cantidad = int(palabras[i])
+        producto = "taco"
+        tipo = None
 
-            resultado.append({
-                "cantidad": cantidad,
-                "producto": producto,
-                "tipo": tipo
-            })
+        # producto
+        if i + 1 < len(palabras) and palabras[i+1] in productos_base:
+            producto = palabras[i+1]
+            i += 1
 
-        i += 1
+        # tipo
+        if i + 1 < len(palabras) and palabras[i+1] in tipos_carne:
+            tipo = palabras[i+1]
+            i += 1
+
+        resultado.append({
+            "cantidad": cantidad,
+            "producto": producto,
+            "tipo": tipo
+        })
+
+    i += 1
 
     return resultado
 # ========================
