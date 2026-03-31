@@ -160,6 +160,10 @@ def extraer_pedidos(texto):
     i = 0
     while i < len(palabras):
         if palabras[i].isdigit():
+    # evitar doble conteo
+    if i > 0 and palabras[i-1] in tipos_carne:
+        i += 1
+        continue
             cantidad = int(palabras[i])
             producto = "taco"
             tipo = None
@@ -231,10 +235,11 @@ def responder(texto: str, cliente_id: str):
 
         # -------- AGREGAR TIPO FALTANTE --------
         for item in temp_items:
-            if not item.get("tipo"):
-                for tipo in tipos_carne:
-                    if tipo in texto:
-                        item["tipo"] = tipo
+    if not item.get("tipo"):
+        for tipo in tipos_carne:
+            if tipo in texto:
+                item["tipo"] = tipo
+                break  # 🔥 evita repetir
 
         # verificar otra vez si ya está completo
         faltantes = [i for i in temp_items if not i.get("tipo")]
@@ -282,8 +287,10 @@ def responder(texto: str, cliente_id: str):
         if not items:
             return "No entendí bien tu pedido 😅 ¿puedes escribirlo así? Ej: 3 tacos pastor"
 
-        pedidos_temporales[cliente_id] = items
+        if cliente_id not in pedidos_temporales:
+    pedidos_temporales[cliente_id] = []
 
+pedidos_temporales[cliente_id].extend(items)
         faltantes = [i for i in items if i["tipo"] is None and i["tipo"] != "especialidad"]
 
         if faltantes:
