@@ -271,14 +271,15 @@ def responder(texto: str, cliente_id: str):
 
         pedidos_temporales[cliente_id] = items
 
-        faltantes = [i for i in items if i["tipo"] is None]
+        faltantes = [i for i in items if i["tipo"] is None and i["tipo"] != "especialidad"]
 
         if faltantes:
             productos = ", ".join(set(i["producto"] for i in faltantes))
             return f"He registrado tu pedido 😄 pero me falta saber de qué son: {productos}"
 
         resumen = ", ".join(
-            f'{i["cantidad"]} x {i["producto"]} de {i["tipo"]}'
+            f'{i["cantidad"]} x {i["producto"]}' if i["tipo"] == "especialidad"
+else f'{i["cantidad"]} x {i["producto"]} de {i["tipo"]}'
             for i in items
         )
 
