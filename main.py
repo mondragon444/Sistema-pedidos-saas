@@ -131,11 +131,16 @@ def dentro_horario():
 # ========================
 def extraer_pedidos(texto):
     texto = texto.lower()
+
+    # 🔥 limpiar palabras innecesarias
+    texto = texto.replace(",", " ").replace("y", " ")
     palabras = texto.split()
 
     resultado = []
 
-    # 🔥 detectar especialidades completas
+    # =========================
+    # 1. DETECTAR ESPECIALIDADES
+    # =========================
     for esp in especialidades_menu:
         if esp in texto:
             resultado.append({
@@ -144,18 +149,27 @@ def extraer_pedidos(texto):
                 "tipo": "especialidad"
             })
 
-    i = 0
+            # 🔥 quitar la especialidad del texto para no interferir
+            texto = texto.replace(esp, "")
 
+    palabras = texto.split()
+
+    # =========================
+    # 2. DETECTAR PEDIDOS NORMALES
+    # =========================
+    i = 0
     while i < len(palabras):
         if palabras[i].isdigit():
             cantidad = int(palabras[i])
             producto = "taco"
             tipo = None
 
+            # producto
             if i + 1 < len(palabras) and palabras[i+1] in productos_base:
                 producto = palabras[i+1]
                 i += 1
 
+            # tipo
             if i + 1 < len(palabras) and palabras[i+1] in tipos_carne:
                 tipo = palabras[i+1]
                 i += 1
@@ -169,7 +183,6 @@ def extraer_pedidos(texto):
         i += 1
 
     return resultado
-
 # ========================
 # Función de respuestas predefinidas con flujo completo
 # ========================
